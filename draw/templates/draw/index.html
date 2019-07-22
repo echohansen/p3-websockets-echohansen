@@ -20,17 +20,135 @@
 </body>
 <script>
 
-    // setting up the canvas and one paper tool
-    var canvas = document.getElementById('myCanvas');
-    paper.setup(canvas);
-    var tool = new paper.Tool();
+  // setting up the canvas and one paper tool
+  var canvas = document.getElementById('myCanvas');
+  paper.setup(canvas);
+  var tool = new paper.Tool();
+  var socket = new WebSocket('wss://p3-websockets-echohansen-echohansen92983.codeanyapp.com/ws/draw');
+  
+  //helper variables
+  var paintReady = false;
+  var color = randomColor();
+  var pStyle = {
+      strokeWidth: 5,
+      strokeColor: color
+  };
+  
+  
+  //1B random color picker. cuilt from stack overflow/internet
+  function randomColor() {
+    var c = "#";
+    var choices = '0123456789ABCDEF';
+    for (var i = 0; i < 6; i ++) {
+      c += choices[Math.floor(Math.random() * 16)];
+    }
+    return c;
+  }
+  
+  //mouse functions
+  tool.onMouseDown = function(event) {
+    paintReady = true;
+    
+    
+    
+    //create message to send
+    var message = {
+      initialPoint: true,
+      x1: event.point.x,
+      y1: event.point.y,
+      //1B
+      color: color
+    };
+    
+    //send to socket
+    socket.send(JSON.stringify(message));
+  }
+  
+  tool.onMouseMove = function(event) {
+    
+    
+    if(paintReady) {
+      
+      //path.add(event.point);
+      
+      //create message
+      var message = {
+       initialPoint: false,
+        x1: event.point.x,
+        y1: event.point.y,
+        //1B
+        color: color
+      };
+      //send to socket
+      socket.send(JSON.stringify(message));
+    }
+  }
+  
+  tool.onMouseUp = function(event) {
+    paintReady = false;
+  }
+  
 
-    // getting the URL (you may want to use for Exercise 3)
-    var url = window.location.href;
+  // getting the URL (you may want to use for Exercise 3)
+  var url = window.location.href;
 
-    // var socket = new WebSocket(
-    //     'wss://<your url here>/ws/draw');
 
+
+  // triggered when receiving a message from the server
+  socket.onmessage = function(receivedMessage) {
+    //get JSON
+    var m = JSON.parse(receivedMessage.data);
+    
+    if (url == "http://p3-websockets-echohansen-echohansen92983.codeanyapp.com/draw/?size=large" ) {
+    //if new path
+    if (m.initialPoint){
+      path = new paper.Path();
+      path.style = pStyle;
+      //1B KEY so that you overwrite each color w the JSON sent color
+      path.strokeColor = m.color;
+    }
+    var point = new paper.Point(m.x1, m.y1);
+    path.add(point);
+    }
+    //in order to differentiate btwn single user windows, use coloe
+    if (m.color == color) {
+      if (m.initialPoint){
+        path = new paper.Path();
+        path.style = pStyle;
+        //1B KEY so that you overwrite each color w the JSON sent color
+        path.strokeColor = m.color;
+      }
+      var point = new paper.Point(m.x1, m.y1);
+      path.add(point);
+    }
+    
+  };
+  
+  //2A
+  window.addEventListener('devicemotion', function(event) {
+    
+    if (Math.abs(event.acceleration.x) > 10 || Math.abs(event.acceleration.y) > 10 || Math.abs(event.acceleration.z) > 10) {
+      paper.project.clear();
+    }
+  });
+  
+  //2B
+  var gamma = 0;
+  window.addEventListener('deviceorientation', function(event) {
+    if (Math.abs(event.gamma - gamma) > 5) {
+      //reset color
+      color = randomColor();
+    }
+    
+    
+  });
+  
+  // notify console if socket closes unexpectedly
+  socket.onclose = function(e) {
+      console.error('Chat socket closed unexpectedly');
+  };
+
+  
 
 </script>
 </html>
