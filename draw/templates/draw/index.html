@@ -127,15 +127,15 @@
   //2A
   window.addEventListener('devicemotion', function(event) {
     
-    if (Math.abs(event.acceleration.x) > 10 || Math.abs(event.acceleration.y) > 10 || Math.abs(event.acceleration.z) > 10) {
+    if (Math.abs(event.acceleration.x) > 10 || Math.abs(event.acceleration.z) > 10) {
       paper.project.clear();
     }
   });
   
   //2B
-  var gamma = 0;
+  
   window.addEventListener('deviceorientation', function(event) {
-    if (Math.abs(event.gamma - gamma) > 5) {
+    if (Math.abs(event.gamma) > 15) {
       //reset color
       color = randomColor();
     }
