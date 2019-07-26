@@ -21,7 +21,7 @@
         display: flex;
         flex-direction: row;
         height: auto;
-        font-size: 60px;
+        font-size: 52px;
         width: auto;
         
       }
@@ -59,13 +59,13 @@
         margin: 4px;
       }
       .month {
-        font-size: 52px;
-        padding: 8px;
+        font-size: 40px;
+        padding: 4px;
         display: flex;
-        text-align: center;
         font-style: bold;
         color: #197026;
         background-color: #f5f5f5;
+				height: 56px;
         
       }
       .bill {
@@ -89,11 +89,11 @@
       }
       
       .mobileVariant1 {
-        height: 200px;
-        width: 840px;
+        height: 600px;
+        width: 1400px;
         margin-left: 140px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         
       }
       
@@ -123,19 +123,13 @@
         background: #f5f5f5;
         color:#197026;
         font-size: 48px;
-        width: 800px;
-        margin-left: 140px;
-        margin-bottom: 60px;
+				position: absolute;
+				left:100px;
       }
-      
-      #piechart {
+			 #piechart {
         width: 500px;
         height: 490px;
-        margin-left: 15%;
-        
-        padding-bottom: 20px;
-        
-       
+        margin-left: 35%;
       }
       
     </style>
@@ -143,15 +137,12 @@
 </head>
 <body>
    <!-- depending on URL, other variants and display will be hidden -->
-   <div class = "page">
+   
      <div class = "header">
        <div>
          Upcoming Charges:
        </div>
-       <div class="user">
-         <img class = "icon" src = "/static/draw/assets/user.svg">
-         <div >echo</div>
-       </div>
+       
      </div>
   
      
@@ -159,8 +150,8 @@
         <img class= "arrow" src = '/static/draw/assets/down-arrow.svg'>
         <div class = "month">AUGUST</div>
        </div>
-      
-        <div class = "bill">
+     
+				<div class = "bill">
           <img class = "arrow2" src = "/static/draw/assets/down-arrow.svg">
           <div class="name">8.1 - Rent</div>
           <div class="cost">$3000</div>
@@ -183,17 +174,15 @@
             <div class = "r"> kira </div>
           </div>
         </div>
-        <!-- <img id="piechart" src="/static/draw/assets/rentpiechart.PNG">                  -->
-       
-       </div>
-  <button type="button" class="btn btn-outline-success"> Pay this Bill?</button>
+				<img id="piechart" src="/static/draw/assets/rentpiechart.PNG">
+			</div>
+			 
+			
+        
+
       
-        <div class = "bill">
-          <img class = "arrow2" src = "/static/draw/assets/right-arrow.svg">
-          <div class="name">8.15 - EBMUD</div>
-          <div class="cost">$85</div>
-      </div>
-    </div>
+        
+    
 
   
 </body>
@@ -205,10 +194,7 @@
   // getting the URL (you may want to use for Exercise 3)
   var url = window.location.href;
   
-  $(".btn").click(function(event) {
-    socket.send("hi");
-  });
-
+ 
 
   // triggered when receiving a message from the server
   socket.onmessage = function(receivedMessage) {
@@ -217,7 +203,6 @@
     $(".btn").text("PAID!");
     $(".btn").css("background-color", "#f5f5f5", "color", "#197026");
     document.getElementById("piechart").src = "/static/draw/assets/piechart2.png";
-    
     
   };
   
